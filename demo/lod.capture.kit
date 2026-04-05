@@ -1,0 +1,27 @@
+[package]
+title = "LOD Capture"
+version = "0.1.0"
+description = "Headless capture app for LOD switching demo"
+
+[dependencies]
+"omni.hydra.rtx" = {}
+"omni.kit.renderer.core" = {}
+"omni.kit.viewport.window" = {}
+"omni.kit.viewport.utility" = {}
+"omni.kit.manipulator.camera" = {}
+"omni.usd" = {}
+
+[settings]
+renderer.enabled = "rtx"
+app.fastShutdown = true
+app.window.width = 960
+app.window.height = 540
+
+[settings.app.viewport.defaults]
+fillViewport = true
+
+[settings.app.exts.folders]
+'++' = [
+    "${app}/../exts",
+    "${app}/../extscache/"
+]
