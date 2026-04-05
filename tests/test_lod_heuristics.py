@@ -1,6 +1,9 @@
 """Tests for LOD switching heuristics.
 
-These tests MUST fail initially (no implementation exists yet).
+Tests both metrics:
+  - compute_screen_size (primary — cone angle, fast)
+  - compute_screen_fraction (secondary — NDC projection)
+And the hysteresis decision function.
 """
 import pytest
 import math
@@ -14,39 +17,32 @@ os.environ["LD_LIBRARY_PATH"] = os.path.join(USD_ROOT, "lib") + ":" + os.environ
 
 from pxr import Usd, UsdGeom, Gf, Sdf
 
-# Import the module under test (doesn't exist yet → ImportError = expected failure)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from lod_heuristics import compute_screen_fraction, decide_purpose
+from lod_heuristics import compute_screen_size, compute_screen_fraction, decide_purpose
 
 
 # ---------------------------------------------------------------------------
-# Helpers: create minimal test stages
+# Helpers
 # ---------------------------------------------------------------------------
 
 def _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=90.0):
     """Create a stage with a unit cube at origin and a camera looking at it."""
     stage = Usd.Stage.CreateInMemory()
 
-    # Cube centered at origin, size cube_size (half-extent = cube_size/2)
     cube_prim = stage.DefinePrim("/World/Cube", "Cube")
     cube_geom = UsdGeom.Cube(cube_prim)
     cube_geom.GetSizeAttr().Set(cube_size)
 
-    # Camera at (0, 0, camera_distance) looking toward -Z (toward origin)
     cam_prim = stage.DefinePrim("/World/Camera", "Camera")
     cam = UsdGeom.Camera(cam_prim)
 
-    # Set focal length and aperture to achieve desired FOV
-    # FOV = 2 * atan(aperture / (2 * focalLength))
-    # For 90° FOV with 20mm aperture: focalLength = 10mm
-    aperture = 20.0  # mm
+    aperture = 20.0
     focal_length = aperture / (2.0 * math.tan(math.radians(fov / 2.0)))
     cam.GetFocalLengthAttr().Set(focal_length)
     cam.GetHorizontalApertureAttr().Set(aperture)
-    cam.GetVerticalApertureAttr().Set(aperture)  # square sensor
+    cam.GetVerticalApertureAttr().Set(aperture)
     cam.GetClippingRangeAttr().Set(Gf.Vec2f(0.1, 1000.0))
 
-    # Position camera
     xformable = UsdGeom.Xformable(cam_prim)
     xformable.AddTranslateOp().Set(Gf.Vec3d(0, 0, camera_distance))
 
@@ -54,14 +50,108 @@ def _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=90.0):
 
 
 # ---------------------------------------------------------------------------
-# Tests: compute_screen_fraction
+# Tests: compute_screen_size (primary — cone angle)
+# ---------------------------------------------------------------------------
+
+class TestComputeScreenSize:
+    """Test the fast bounding-sphere screen size metric."""
+
+    def test_known_distance(self):
+        """A 2-unit cube at distance 10 should have predictable screen_size."""
+        stage = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0)
+
+        size = compute_screen_size(
+            stage, "/World/Cube", "/World/Camera",
+            time=Usd.TimeCode.Default()
+        )
+
+        # Cube half-extent = 1.0, bounding sphere radius = sqrt(3) ≈ 1.732
+        # Distance from eye (0,0,10) to centre (0,0,0) = 10
+        # screen_size = 1.732 / 10 ≈ 0.1732
+        expected = math.sqrt(3) / 10.0
+        assert size == pytest.approx(expected, rel=0.01)
+
+    def test_very_close_returns_one(self):
+        """Camera inside bounding sphere → screen_size = 1.0."""
+        stage = _make_cube_camera_stage(cube_size=100.0, camera_distance=1.0)
+
+        size = compute_screen_size(
+            stage, "/World/Cube", "/World/Camera",
+            time=Usd.TimeCode.Default()
+        )
+
+        assert size == 1.0
+
+    def test_very_far_near_zero(self):
+        """Tiny cube far away → near-zero screen_size."""
+        stage = _make_cube_camera_stage(cube_size=0.01, camera_distance=500.0)
+
+        size = compute_screen_size(
+            stage, "/World/Cube", "/World/Camera",
+            time=Usd.TimeCode.Default()
+        )
+
+        assert size < 0.001
+
+    def test_inversely_proportional_to_distance(self):
+        """Doubling the distance should halve the screen_size."""
+        stage1 = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0)
+        stage2 = _make_cube_camera_stage(cube_size=2.0, camera_distance=20.0)
+
+        s1 = compute_screen_size(stage1, "/World/Cube", "/World/Camera")
+        s2 = compute_screen_size(stage2, "/World/Cube", "/World/Camera")
+
+        assert s1 == pytest.approx(2 * s2, rel=0.01)
+
+    def test_proportional_to_size(self):
+        """Doubling the cube size should double the screen_size."""
+        stage1 = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0)
+        stage2 = _make_cube_camera_stage(cube_size=4.0, camera_distance=10.0)
+
+        s1 = compute_screen_size(stage1, "/World/Cube", "/World/Camera")
+        s2 = compute_screen_size(stage2, "/World/Cube", "/World/Camera")
+
+        assert s2 == pytest.approx(2 * s1, rel=0.01)
+
+    def test_returns_float_in_range(self):
+        """Result should always be in [0, 1]."""
+        stage = _make_cube_camera_stage()
+
+        size = compute_screen_size(
+            stage, "/World/Cube", "/World/Camera"
+        )
+
+        assert 0.0 <= size <= 1.0
+
+    def test_invalid_prim_returns_zero(self):
+        """Non-existent prim → 0.0."""
+        stage = _make_cube_camera_stage()
+
+        size = compute_screen_size(
+            stage, "/World/NonExistent", "/World/Camera"
+        )
+
+        assert size == 0.0
+
+    def test_camera_independent_of_fov(self):
+        """screen_size shouldn't change with FOV (it's a geometric ratio)."""
+        stage1 = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=60.0)
+        stage2 = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=120.0)
+
+        s1 = compute_screen_size(stage1, "/World/Cube", "/World/Camera")
+        s2 = compute_screen_size(stage2, "/World/Cube", "/World/Camera")
+
+        assert s1 == pytest.approx(s2, rel=0.001)
+
+
+# ---------------------------------------------------------------------------
+# Tests: compute_screen_fraction (secondary — NDC projection)
 # ---------------------------------------------------------------------------
 
 class TestComputeScreenFraction:
-    """Test screen-space size computation."""
+    """Test the full NDC projection method."""
 
     def test_cube_at_known_distance(self):
-        """A 2-unit cube at distance 10 with 90° FOV should have a predictable screen fraction."""
         stage = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=90.0)
 
         fraction = compute_screen_fraction(
@@ -70,15 +160,9 @@ class TestComputeScreenFraction:
             image_width=1024, image_height=1024
         )
 
-        # With 90° FOV, at distance 10, a 2-unit cube subtends:
-        # angular half-size = atan(1/10) ≈ 5.71°
-        # NDC half-extent ≈ tan(5.71°) / tan(45°) ≈ 0.1
-        # NDC full extent ≈ 0.2 on each axis
-        # screen_fraction ≈ (0.2 * 0.2) / 4.0 = 0.01
         assert fraction == pytest.approx(0.01, abs=0.005)
 
     def test_cube_very_close_fills_screen(self):
-        """A cube very close to the camera should approach screen_fraction = 1.0."""
         stage = _make_cube_camera_stage(cube_size=100.0, camera_distance=1.0, fov=90.0)
 
         fraction = compute_screen_fraction(
@@ -90,7 +174,6 @@ class TestComputeScreenFraction:
         assert fraction >= 0.9
 
     def test_cube_very_far_near_zero(self):
-        """A tiny cube far from camera should have near-zero screen fraction."""
         stage = _make_cube_camera_stage(cube_size=0.01, camera_distance=500.0, fov=90.0)
 
         fraction = compute_screen_fraction(
@@ -102,10 +185,7 @@ class TestComputeScreenFraction:
         assert fraction < 0.001
 
     def test_prim_behind_camera_returns_zero(self):
-        """If the object is entirely behind the camera, screen fraction = 0."""
         stage = _make_cube_camera_stage(cube_size=2.0, camera_distance=10.0, fov=90.0)
-
-        # Move cube behind camera (camera at Z=10, cube at Z=20)
         cube = stage.GetPrimAtPath("/World/Cube")
         UsdGeom.Xformable(cube).AddTranslateOp().Set(Gf.Vec3d(0, 0, 20))
 
@@ -118,7 +198,6 @@ class TestComputeScreenFraction:
         assert fraction == 0.0
 
     def test_returns_float_between_0_and_1(self):
-        """Screen fraction should always be in [0, 1]."""
         stage = _make_cube_camera_stage()
 
         fraction = compute_screen_fraction(
@@ -131,95 +210,59 @@ class TestComputeScreenFraction:
 
 
 # ---------------------------------------------------------------------------
-# Tests: decide_purpose (hysteresis state machine)
+# Tests: decide_purpose (hysteresis)
 # ---------------------------------------------------------------------------
 
 class TestDecidePurpose:
-    """Test purpose switching with hysteresis."""
+    """Test purpose switching with hysteresis dead zone."""
 
     def test_proxy_to_render_above_high(self):
-        """When proxy and screen_fraction >= high_threshold → switch to render."""
-        result = decide_purpose(
-            screen_fraction=0.10,
-            current_purpose="proxy",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "render"
+        assert decide_purpose(0.10, "proxy", 0.05, 0.02) == "render"
 
     def test_render_to_proxy_below_low(self):
-        """When render and screen_fraction <= low_threshold → switch to proxy."""
-        result = decide_purpose(
-            screen_fraction=0.01,
-            current_purpose="render",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "proxy"
+        assert decide_purpose(0.01, "render", 0.05, 0.02) == "proxy"
 
     def test_proxy_stays_in_dead_zone(self):
-        """When proxy and screen_fraction is between thresholds → stay proxy."""
-        result = decide_purpose(
-            screen_fraction=0.03,
-            current_purpose="proxy",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "proxy"
+        assert decide_purpose(0.03, "proxy", 0.05, 0.02) == "proxy"
 
     def test_render_stays_in_dead_zone(self):
-        """When render and screen_fraction is between thresholds → stay render."""
-        result = decide_purpose(
-            screen_fraction=0.03,
-            current_purpose="render",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "render"
+        assert decide_purpose(0.03, "render", 0.05, 0.02) == "render"
 
     def test_proxy_stays_below_low(self):
-        """When proxy and screen_fraction < low_threshold → stay proxy."""
-        result = decide_purpose(
-            screen_fraction=0.001,
-            current_purpose="proxy",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "proxy"
+        assert decide_purpose(0.001, "proxy", 0.05, 0.02) == "proxy"
 
     def test_render_stays_above_high(self):
-        """When render and screen_fraction > high_threshold → stay render."""
-        result = decide_purpose(
-            screen_fraction=0.10,
-            current_purpose="render",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "render"
+        assert decide_purpose(0.10, "render", 0.05, 0.02) == "render"
 
     def test_exact_high_threshold_switches(self):
-        """Exactly at high_threshold from proxy → switch to render."""
-        result = decide_purpose(
-            screen_fraction=0.05,
-            current_purpose="proxy",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "render"
+        assert decide_purpose(0.05, "proxy", 0.05, 0.02) == "render"
 
     def test_exact_low_threshold_switches(self):
-        """Exactly at low_threshold from render → switch to proxy."""
-        result = decide_purpose(
-            screen_fraction=0.02,
-            current_purpose="render",
-            high_threshold=0.05,
-            low_threshold=0.02
-        )
-        assert result == "proxy"
+        assert decide_purpose(0.02, "render", 0.05, 0.02) == "proxy"
+
+    def test_full_dolly_sequence(self):
+        """Simulate camera dollying away then back — verify no flicker."""
+        # Start close (render)
+        purpose = "render"
+        high, low = 0.05, 0.02
+
+        # Camera pulls back: 0.10 → 0.04 → 0.03 → 0.019 → 0.01
+        for val in [0.10, 0.04, 0.03, 0.019, 0.01]:
+            purpose = decide_purpose(val, purpose, high, low)
+
+        assert purpose == "proxy"  # Should have switched at 0.019 (≤ 0.02)
+
+        # Camera pushes forward: 0.01 → 0.03 → 0.04 → 0.051
+        for val in [0.01, 0.03, 0.04]:
+            purpose = decide_purpose(val, purpose, high, low)
+            assert purpose == "proxy"  # Dead zone — shouldn't switch yet
+
+        purpose = decide_purpose(0.051, purpose, high, low)
+        assert purpose == "render"  # Now above high → switch
 
 
 # ---------------------------------------------------------------------------
-# Tests: ALAB integration (smoke test)
+# Tests: ALAB integration
 # ---------------------------------------------------------------------------
 
 ALAB_PATH = "/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usda"
@@ -229,26 +272,8 @@ ALAB_PATH = "/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usd
 class TestALABIntegration:
     """Smoke tests against real ALAB assets."""
 
-    def test_alab_proxy_prim_computes_fraction(self):
-        """Can compute screen fraction for an ALAB prim with proxy purpose."""
-        stage = Usd.Stage.Open(ALAB_PATH)
-        assert stage is not None
-
-        # Find a prim with proxy purpose
-        proxy_path = None
-        for prim in stage.Traverse():
-            img = UsdGeom.Imageable(prim)
-            if img:
-                purpose_attr = img.GetPurposeAttr()
-                if purpose_attr and purpose_attr.HasAuthoredValue():
-                    if purpose_attr.Get() == "proxy":
-                        proxy_path = str(prim.GetPath())
-                        break
-
-        assert proxy_path is not None, "No proxy prim found in ALAB"
-
-        # We need a camera — create one at a reasonable position
-        cam_prim = stage.OverridePrim("/TestCamera")
+    def _make_alab_camera(self, stage):
+        """Add a test camera to the ALAB stage."""
         cam_prim = stage.DefinePrim("/TestCamera", "Camera")
         cam = UsdGeom.Camera(cam_prim)
         cam.GetFocalLengthAttr().Set(50.0)
@@ -256,13 +281,39 @@ class TestALABIntegration:
         cam.GetVerticalApertureAttr().Set(24.0)
         xf = UsdGeom.Xformable(cam_prim)
         xf.AddTranslateOp().Set(Gf.Vec3d(0, 150, 300))
+        return "/TestCamera"
+
+    def _find_proxy_prim(self, stage):
+        """Find the first prim with proxy purpose."""
+        for prim in stage.Traverse():
+            img = UsdGeom.Imageable(prim)
+            if img:
+                pa = img.GetPurposeAttr()
+                if pa and pa.HasAuthoredValue() and pa.Get() == "proxy":
+                    return str(prim.GetPath())
+        return None
+
+    def test_alab_screen_size(self):
+        """compute_screen_size works on an ALAB proxy prim."""
+        stage = Usd.Stage.Open(ALAB_PATH)
+        cam_path = self._make_alab_camera(stage)
+        proxy_path = self._find_proxy_prim(stage)
+        assert proxy_path is not None
+
+        size = compute_screen_size(stage, proxy_path, cam_path)
+        assert isinstance(size, float)
+        assert 0.0 <= size <= 1.0
+
+    def test_alab_screen_fraction(self):
+        """compute_screen_fraction works on an ALAB proxy prim."""
+        stage = Usd.Stage.Open(ALAB_PATH)
+        cam_path = self._make_alab_camera(stage)
+        proxy_path = self._find_proxy_prim(stage)
+        assert proxy_path is not None
 
         fraction = compute_screen_fraction(
-            stage, proxy_path, "/TestCamera",
-            time=Usd.TimeCode.Default(),
+            stage, proxy_path, cam_path,
             image_width=1920, image_height=1080
         )
-
-        # Should be a valid number
         assert isinstance(fraction, float)
         assert 0.0 <= fraction <= 1.0
