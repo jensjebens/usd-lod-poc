@@ -1,0 +1,275 @@
+#usda 1.0
+(
+    endTimeCode = 60
+    startTimeCode = 1
+    upAxis = "Y"
+)
+
+def Xform "World"
+{
+    def Cube "Ground"
+    {
+        rel material:binding = </World/Materials/GroundMat>
+        double size = 80
+        double3 xformOp:translate = (0, -40.5, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def "Materials"
+    {
+        def Material "GroundMat"
+        {
+            token outputs:surface.connect = </World/Materials/GroundMat/PBRShader.outputs:surface>
+
+            def Shader "PBRShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.3, 0.3, 0.35)
+                float inputs:metallic = 0
+                float inputs:roughness = 0.4
+                token outputs:surface
+            }
+        }
+
+        def Material "RedMat"
+        {
+            token outputs:surface.connect = </World/Materials/RedMat/PBRShader.outputs:surface>
+
+            def Shader "PBRShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.9, 0.15, 0.1)
+                float inputs:metallic = 0
+                float inputs:roughness = 0.4
+                token outputs:surface
+            }
+        }
+
+        def Material "GreenMat"
+        {
+            token outputs:surface.connect = </World/Materials/GreenMat/PBRShader.outputs:surface>
+
+            def Shader "PBRShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.8, 0.2)
+                float inputs:metallic = 0
+                float inputs:roughness = 0.4
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "LODObject"
+    {
+        def Sphere "HighDetail"
+        {
+            rel material:binding = </World/Materials/RedMat>
+            uniform token purpose = "render"
+            double radius = 1
+            token visibility.timeSamples = {
+                1: "inherited",
+                2: "inherited",
+                3: "inherited",
+                4: "inherited",
+                5: "inherited",
+                6: "inherited",
+                7: "inherited",
+                8: "inherited",
+                9: "inherited",
+                10: "inherited",
+                11: "inherited",
+                12: "inherited",
+                13: "inherited",
+                14: "inherited",
+                15: "inherited",
+                16: "inherited",
+                17: "inherited",
+                18: "inherited",
+                19: "inherited",
+                20: "inherited",
+                21: "inherited",
+                22: "inherited",
+                23: "inherited",
+                24: "inherited",
+                25: "inherited",
+                26: "inherited",
+                27: "inherited",
+                28: "inherited",
+                29: "inherited",
+                30: "inherited",
+                31: "inherited",
+                32: "inherited",
+                33: "inherited",
+                34: "inherited",
+                35: "inherited",
+                36: "inherited",
+                37: "inherited",
+                38: "inherited",
+                39: "inherited",
+                40: "inherited",
+                41: "invisible",
+                42: "invisible",
+                43: "invisible",
+                44: "invisible",
+                45: "invisible",
+                46: "invisible",
+                47: "invisible",
+                48: "invisible",
+                49: "invisible",
+                50: "invisible",
+                51: "invisible",
+                52: "invisible",
+                53: "invisible",
+                54: "invisible",
+                55: "invisible",
+                56: "invisible",
+                57: "invisible",
+                58: "invisible",
+                59: "invisible",
+                60: "invisible",
+            }
+        }
+
+        def Cube "LowDetail"
+        {
+            rel material:binding = </World/Materials/GreenMat>
+            uniform token purpose = "proxy"
+            double size = 1.6
+            token visibility.timeSamples = {
+                1: "invisible",
+                2: "invisible",
+                3: "invisible",
+                4: "invisible",
+                5: "invisible",
+                6: "invisible",
+                7: "invisible",
+                8: "invisible",
+                9: "invisible",
+                10: "invisible",
+                11: "invisible",
+                12: "invisible",
+                13: "invisible",
+                14: "invisible",
+                15: "invisible",
+                16: "invisible",
+                17: "invisible",
+                18: "invisible",
+                19: "invisible",
+                20: "invisible",
+                21: "invisible",
+                22: "invisible",
+                23: "invisible",
+                24: "invisible",
+                25: "invisible",
+                26: "invisible",
+                27: "invisible",
+                28: "invisible",
+                29: "invisible",
+                30: "invisible",
+                31: "invisible",
+                32: "invisible",
+                33: "invisible",
+                34: "invisible",
+                35: "invisible",
+                36: "invisible",
+                37: "invisible",
+                38: "invisible",
+                39: "invisible",
+                40: "invisible",
+                41: "inherited",
+                42: "inherited",
+                43: "inherited",
+                44: "inherited",
+                45: "inherited",
+                46: "inherited",
+                47: "inherited",
+                48: "inherited",
+                49: "inherited",
+                50: "inherited",
+                51: "inherited",
+                52: "inherited",
+                53: "inherited",
+                54: "inherited",
+                55: "inherited",
+                56: "inherited",
+                57: "inherited",
+                58: "inherited",
+                59: "inherited",
+                60: "inherited",
+            }
+        }
+    }
+
+    def Camera "Camera"
+    {
+        float2 clippingRange = (0.1, 1000)
+        float focalLength = 35
+        float horizontalAperture = 36
+        float verticalAperture = 20.25
+        double3 xformOp:translate.timeSamples = {
+            1: (0.8999999999999999, 1.15, 3),
+            2: (1.088135593220339, 1.18135593220339, 3.6271186440677967),
+            3: (1.276271186440678, 1.2127118644067796, 4.254237288135593),
+            4: (1.464406779661017, 1.2440677966101696, 4.88135593220339),
+            5: (1.652542372881356, 1.2754237288135593, 5.508474576271187),
+            6: (1.8406779661016948, 1.306779661016949, 6.135593220338983),
+            7: (2.028813559322034, 1.338135593220339, 6.76271186440678),
+            8: (2.2169491525423726, 1.3694915254237288, 7.389830508474576),
+            9: (2.405084745762712, 1.4008474576271186, 8.016949152542374),
+            10: (2.5932203389830506, 1.4322033898305084, 8.64406779661017),
+            11: (2.7813559322033896, 1.4635593220338983, 9.271186440677965),
+            12: (2.9694915254237286, 1.494915254237288, 9.898305084745763),
+            13: (3.157627118644068, 1.526271186440678, 10.52542372881356),
+            14: (3.3457627118644067, 1.557627118644068, 11.152542372881356),
+            15: (3.5338983050847457, 1.5889830508474576, 11.779661016949152),
+            16: (3.7220338983050842, 1.6203389830508474, 12.406779661016948),
+            17: (3.9101694915254237, 1.6516949152542373, 13.033898305084746),
+            18: (4.098305084745763, 1.6830508474576273, 13.661016949152543),
+            19: (4.286440677966102, 1.714406779661017, 14.288135593220339),
+            20: (4.47457627118644, 1.7457627118644068, 14.915254237288135),
+            21: (4.662711864406779, 1.7771186440677966, 15.54237288135593),
+            22: (4.850847457627119, 1.8084745762711867, 16.16949152542373),
+            23: (5.038983050847458, 1.8398305084745763, 16.796610169491526),
+            24: (5.227118644067796, 1.8711864406779661, 17.423728813559322),
+            25: (5.415254237288136, 1.902542372881356, 18.05084745762712),
+            26: (5.6033898305084735, 1.9338983050847456, 18.677966101694913),
+            27: (5.791525423728814, 1.9652542372881356, 19.305084745762713),
+            28: (5.979661016949152, 1.9966101694915255, 19.93220338983051),
+            29: (6.167796610169491, 2.0279661016949153, 20.559322033898304),
+            30: (6.355932203389831, 2.0593220338983054, 21.186440677966104),
+            31: (6.544067796610169, 2.090677966101695, 21.813559322033896),
+            32: (6.7322033898305085, 2.1220338983050846, 22.440677966101696),
+            33: (6.920338983050847, 2.1533898305084747, 23.06779661016949),
+            34: (7.108474576271186, 2.1847457627118647, 23.694915254237287),
+            35: (7.296610169491526, 2.2161016949152543, 24.322033898305087),
+            36: (7.484745762711864, 2.247457627118644, 24.94915254237288),
+            37: (7.672881355932203, 2.278813559322034, 25.576271186440678),
+            38: (7.861016949152542, 2.310169491525424, 26.203389830508474),
+            39: (8.04915254237288, 2.3415254237288137, 26.83050847457627),
+            40: (8.23728813559322, 2.3728813559322033, 27.45762711864407),
+            41: (8.425423728813557, 2.404237288135593, 28.08474576271186),
+            42: (8.613559322033899, 2.4355932203389834, 28.71186440677966),
+            43: (8.801694915254236, 2.466949152542373, 29.338983050847457),
+            44: (8.989830508474576, 2.4983050847457626, 29.966101694915253),
+            45: (9.177966101694915, 2.5296610169491527, 30.593220338983052),
+            46: (9.366101694915255, 2.5610169491525427, 31.220338983050848),
+            47: (9.554237288135592, 2.5923728813559324, 31.847457627118644),
+            48: (9.74237288135593, 2.623728813559322, 32.474576271186436),
+            49: (9.930508474576273, 2.6550847457627125, 33.10169491525424),
+            50: (10.11864406779661, 2.686440677966102, 33.728813559322035),
+            51: (10.306779661016948, 2.7177966101694917, 34.35593220338983),
+            52: (10.49491525423729, 2.7491525423728818, 34.98305084745763),
+            53: (10.683050847457627, 2.7805084745762714, 35.610169491525426),
+            54: (10.871186440677967, 2.8118644067796614, 36.237288135593225),
+            55: (11.059322033898304, 2.843220338983051, 36.86440677966102),
+            56: (11.247457627118642, 2.8745762711864407, 37.49152542372881),
+            57: (11.435593220338982, 2.9059322033898303, 38.11864406779661),
+            58: (11.623728813559323, 2.9372881355932208, 38.74576271186441),
+            59: (11.811864406779662, 2.9686440677966104, 39.37288135593221),
+            60: (12, 3, 40),
+        }
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+}
+
