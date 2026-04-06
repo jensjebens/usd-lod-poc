@@ -17,7 +17,7 @@ import sys
 import subprocess
 import math
 
-USD_ROOT = "/home/horde/.openclaw/workspace-alab/usd-bin/usd-v25.08"
+USD_ROOT = "/tmp/usd-purpose-vis-build"
 sys.path.insert(0, os.path.join(USD_ROOT, "lib", "python"))
 os.environ["LD_LIBRARY_PATH"] = os.path.join(USD_ROOT, "lib") + ":" + os.environ.get("LD_LIBRARY_PATH", "")
 
@@ -202,6 +202,8 @@ def _render_and_check_visibility(stage, purposes, expected_visible_paths):
     env["__NV_PRIME_RENDER_OFFLOAD"] = "1"
     env["__GLX_VENDOR_LIBRARY_NAME"] = "nvidia"
     env["PATH"] = os.path.join(USD_ROOT, "bin") + ":" + env.get("PATH", "")
+    env["LD_LIBRARY_PATH"] = os.path.join(USD_ROOT, "lib") + ":" + env.get("LD_LIBRARY_PATH", "")
+    env["PYTHONPATH"] = os.path.join(USD_ROOT, "lib", "python") + ":" + env.get("PYTHONPATH", "")
 
     purposes_arg = ",".join(purposes)
     cmd = [
