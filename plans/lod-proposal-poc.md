@@ -58,9 +58,27 @@ No implementation exists yet. This POC proves the schema works end-to-end: autho
 
 ### Phase C: Hydra Integration
 
-1. **Option A (simpler)**: Python script that evaluates LOD per frame, sets `visibility` on non-active items, renders with `usdrecord`
-2. **Option B (proper)**: Scene index filter plugin (C++ or Python) that reads LOD schema and filters prims — requires building into the USD install
-3. Start with Option A for the POC, document Option B design
+**Architecture (confirmed by Newton):**
+
+LOD scene index filter inserts at steps 9-11 (post-flattening), registered via `UsdImagingSceneIndexPlugin`. Same mechanism as Newton's HdExec. Post-flattening gives us world-space positions for distance calculation. LOD filter at step 10, Newton HdExec at step 11 — LOD evaluates first so physics sees LOD state.
+
+```
+ 9. AppendSceneIndicesForRenderer ← PLUGIN INSERTION
+10.   └─ HdLodSceneIndex (us) ← evaluates heuristics, sets visibility
+11.   └─ HdExecComputedTransformSceneIndex (Newton)
+```
+
+The filter:
+1. Reads `LodGroupAPI` relationships to find items
+2. Evaluates active heuristic (needs camera position from render settings)
+3. Overrides `visibility` data source on non-active items → `"invisible"`
+4. Batch-dirties all changed prims per frame (not one-by-one)
+5. For physics LOD (future): exposes `physics:lodActive` data source flag for downstream
+
+**Implementation phases:**
+1. **Option A (POC)**: Python script that evaluates LOD per frame, sets `visibility` on stage, renders with `usdrecord`
+2. **Option B (proper)**: C++ `UsdImagingSceneIndexPlugin` that does the above in the Hydra pipeline
+3. Start with Option A, document Option B design for the real implementation
 
 ### Phase D: Demo
 
