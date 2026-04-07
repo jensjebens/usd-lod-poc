@@ -1,0 +1,109 @@
+#usda 1.0
+(
+    upAxis = "Y"
+    defaultPrim = "World"
+)
+
+# Screenshot 3 variant: Cube has visibility = "invisible"
+def Xform "World"
+{
+    def Xform "Ground"
+    {
+        def Cube "Plane"
+        {
+            double size = 20
+            double3 xformOp:translate = (0, -0.5, 0)
+            double3 xformOp:scale = (1, 0.02, 1)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            rel material:binding = </World/Materials/GroundMat>
+        }
+    }
+
+    def Cone "Cone_Default"
+    {
+        uniform token purpose = "default"
+        double radius = 0.5
+        double height = 1.5
+        double3 xformOp:translate = (-2.5, 0.75, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        rel material:binding = </World/Materials/BlueMat>
+    }
+
+    def Sphere "Sphere_Render"
+    {
+        uniform token purpose = "render"
+        double radius = 0.7
+        double3 xformOp:translate = (0, 0.7, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        rel material:binding = </World/Materials/RedMat>
+    }
+
+    def Cube "Cube_Proxy"
+    {
+        uniform token purpose = "proxy"
+        token visibility = "invisible"
+        double size = 1.2
+        double3 xformOp:translate = (2.5, 0.6, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        rel material:binding = </World/Materials/GreenMat>
+    }
+
+    def Camera "DemoCamera"
+    {
+        float2 clippingRange = (0.1, 100)
+        float focalLength = 35
+        float horizontalAperture = 36
+        float verticalAperture = 20.25
+        double3 xformOp:translate = (0, 2.5, 7)
+        float3 xformOp:rotateXYZ = (-15, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+    }
+
+    def "Materials"
+    {
+        def Material "GroundMat"
+        {
+            token outputs:surface.connect = </World/Materials/GroundMat/Shader.outputs:surface>
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.35, 0.35, 0.4)
+                float inputs:roughness = 0.8
+                token outputs:surface
+            }
+        }
+        def Material "BlueMat"
+        {
+            token outputs:surface.connect = </World/Materials/BlueMat/Shader.outputs:surface>
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.4, 0.9)
+                float inputs:roughness = 0.3
+                token outputs:surface
+            }
+        }
+        def Material "RedMat"
+        {
+            token outputs:surface.connect = </World/Materials/RedMat/Shader.outputs:surface>
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.9, 0.15, 0.1)
+                float inputs:roughness = 0.3
+                token outputs:surface
+            }
+        }
+        def Material "GreenMat"
+        {
+            token outputs:surface.connect = </World/Materials/GreenMat/Shader.outputs:surface>
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.8, 0.2)
+                float inputs:roughness = 0.3
+                token outputs:surface
+            }
+        }
+    }
+}
