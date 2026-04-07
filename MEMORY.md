@@ -8,12 +8,15 @@
 - ALAB scene: `/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usda`
 
 ## Key Builds
-- **Purpose-visibility fixed USD build**: `/tmp/usd-purpose-vis-build/` (Python 3.10, built from source)
-  - Source: `/tmp/usd-visapi-investigation/` on branch `fix/purpose-visibility-in-hydra`
+- **Clean fork build** (April 7): `/tmp/usd-fork-clean-build/` (Python 3.10, from-source, consistent ABI)
+  - Source: `/tmp/usd-visapi-investigation/` on branch `poc/lod-proposal`
   - Includes: purpose visibility fix (PR #8) + hdLod scene index plugin
-  - UsdView: `python3 /tmp/usd-purpose-vis-build/bin/usdview`
+  - UsdView: `python3 /tmp/usd-fork-clean-build/bin/usdview`
+- **Vanilla USD v26.03**: `/tmp/usd-vanilla-build/` (stock release, no fork changes)
+  - Used for issue #22 investigation (confirmed xform reads work on vanilla)
 - **Stock NVIDIA v25.08 binaries**: `/home/horde/.openclaw/workspace-alab/usd-bin/usd-v25.08/` (Python 3.12)
   - Does NOT have our fixes
+- **⚠️ OLD build (ABI broken)**: `/tmp/usd-purpose-vis-build/` — DO NOT USE, partial rebuild corrupted ABI
 
 ## Completed Work
 
@@ -41,17 +44,41 @@
 - 100-frame animated demo GIF (camera dolly-out with LOD switching)
 - Static frame-by-frame approach: evaluate → set visibility → usdrecord render
 
-### hdLod Hydra Scene Index Plugin (Issue #18) — IN PROGRESS
-- **Issue**: https://github.com/jensjebens/OpenUSD/issues/18
+### hdLod Hydra Scene Index Plugin (Issue #18) — COMPLETE ✅
+- **Issue**: https://github.com/jensjebens/OpenUSD/issues/18 — CLOSED
 - **Code**: `pxr/imaging/hdLod/` on `poc/lod-proposal` branch
-- **Build**: compiles and installs cleanly as `libusd_hdLod.so`
+- **Build**: compiles and installs as `libusd_hdLod.so`, auto-loads via Hybrid plugin ordering
 - C++ scene index filter (`HdSingleInputFilteringSceneIndexBase`)
-- `_InvisibleDataSource`: wraps prim data source, overrides visibility to false
+- `_InvisibleDataSource`: wraps prim data source, overrides visibility to false (thread-safe static singleton)
 - `_descendantCache`: maps LodItem → renderable descendants (handles parent Xform items)
 - `_EvaluateLod()`: camera distance, threshold selection, hysteresis state, batch dirty
 - Hierarchical evaluation with inactive subtree gating
 - Plugin registered at phase 0 for all renderers
-- **Not yet tested in UsdView** — next step
+- **Live UsdView demo**: red sphere → green cube → blue cube during playback
+- **Commits**: b851e26 → 0be748c (10 commits on poc/lod-proposal)
+
+### Issue #22 (xform GetTypedValue crash) — CLOSED ✅
+- **Root cause**: ABI mismatch from partial rebuild of `libusd_hd.so` (HD_API_VERSION 95→97)
+- NOT a bug in `_MatrixCombinerDataSource` or the flattening pipeline
+- Vanilla USD v26.03 and clean fork build both pass `GetTypedValue(0.0f)` without crash
+- Reverted unnecessary null-check commit (52e98b2)
+- **Lesson**: Never partially rebuild USD when `hd/dataSource.h` changes
+
+### Issue #25 (UsdView playback LOD re-evaluation) — CLOSED ✅
+- UsdView's `_PrimsDirtied` doesn't propagate to scene index plugins during playback
+  (only fires for prims with registered time-varying locators via `FlagAsTimeVarying()`)
+- **Fix 1** (Newton's pattern): check ANY xform dirty signal in `_PrimsDirtied`, no path filtering
+- **Fix 2** (Newton's Option 4): lazy `GetPrim()` evaluation — read camera xform from Hydra on
+  each render pass, re-evaluate LOD if position changed
+- Reentrancy guard prevents infinite loop (_EvaluateLod → dirty → render → GetPrim → evaluate)
+- `usdviewApi.frame` is read-only in from-source builds; use `ac.setFrame()` or Space bar
+
+### Key Rendering/Capture Lessons (April 7)
+- `grabFrameBuffer()` returns stale GL content when multiple UsdView instances run
+- `x11grab` CAN capture OpenGL viewport via VNC, but ONLY with a single UsdView instance
+- Never run multiple UsdView instances on the same VNC display
+- `scrot -u` captures the window frame but not GL content on VNC
+- `usdrecord` works reliably for frame-by-frame capture with hdLod plugin loaded
 
 ## Architecture — Scene Index Chain
 
@@ -81,14 +108,13 @@ From 3-agent investigation (Newton + Units + LOD):
 | #11 | Units API | jjebens/units-api-poc | OPEN |
 | #12 | OpenExec Units | jjebens/units-aware-value-resolution | OPEN |
 | #13 | Newton GPU Physics | feature/newton-gpu-integration | OPEN |
-| #17 | LOD Proposal POC | poc/lod-proposal | OPEN |
+| #17 | LOD Proposal POC + hdLod plugin | poc/lod-proposal | OPEN |
 
 ## Open Issues (relevant to LOD)
 - #7: Purpose visibility not consumed by Hydra (our fix in PR #8)
 - #15: VisibilityAPI attrs should be non-uniform (blocks purpose-based LOD switching)
-- #16: LOD Proposal POC (delivered)
-- #18: LOD Phase 2 Hydra scene index (hdLod compiles, needs UsdView testing)
 - #19: Newton dual USD runtime crash (workaround: remove bundled usd-core)
+- #24: Upstream engagement: key Pixar developers
 
 ## Collaborators
 - **Newton**: Storm/Hydra pipeline, HdExec scene index, physics LOD use case (ALAB 235 bodies), ancestor walk pattern. Found dual USD runtime crash (#19).
@@ -121,3 +147,9 @@ From 3-agent investigation (Newton + Units + LOD):
 - `scrot -u` + `wmctrl -i -a <wid>` for focused window screenshots
 - PyOpenGL needed for python3.12 UsdView: `python3.12 -m pip install PyOpenGL PyOpenGL-accelerate`
 - plugInfo.json template variables: `@PLUG_INFO_LIBRARY_PATH@` etc must be resolved for manual installs
+- **Never partially rebuild USD** — HD_API_VERSION bump requires full rebuild of ALL dependent libs
+- **HdVisibilitySchema::Builder::Build() is NOT thread-safe** in TBB contexts — use HdRetainedContainerDataSource::New() directly
+- **Single UsdView instance on VNC** — multiple instances corrupt GL compositing, x11grab captures garbage
+- **`usdviewApi.frame` is read-only** in from-source builds — use `ac.setFrame()` or Space bar
+- **`_PrimsDirtied` doesn't fire during UsdView playback** unless prims have time-varying locators — use lazy GetPrim() evaluation instead
+- **x11grab CAN capture OpenGL on VNC** but only with a single GL context active
