@@ -204,11 +204,23 @@ def apply_lod_visibility(stage, lod_result):
     """Apply LOD evaluation results as visibility on the stage.
 
     Active items get visibility="inherited", non-active get "invisible".
+    Items belonging to gated groups (Axiom 1 — parent inactive) are also
+    set to invisible.
 
     Args:
         stage: USD stage
         lod_result: dict from evaluate_lod()
     """
+    # Collect inactive subtrees from evaluated groups
+    inactive_subtrees = set()
+    for group_path, active_idx in lod_result.items():
+        group = LodGroupAPI(stage, group_path)
+        item_paths = group.GetLodItems()
+        for i, item_path in enumerate(item_paths):
+            if i != active_idx:
+                inactive_subtrees.add(item_path)
+
+    # Apply visibility for evaluated groups
     for group_path, active_idx in lod_result.items():
         group = LodGroupAPI(stage, group_path)
         item_paths = group.GetLodItems()
@@ -225,4 +237,28 @@ def apply_lod_visibility(stage, lod_result):
             if i == active_idx:
                 img.GetVisibilityAttr().Set('inherited')
             else:
+                img.GetVisibilityAttr().Set('invisible')
+
+    # Hide items of gated groups (groups inside inactive subtrees)
+    for group_path in _find_all_lod_groups(stage):
+        if group_path in lod_result:
+            continue  # already handled above
+
+        # Check if this group is inside an inactive subtree
+        gated = False
+        for inactive_path in inactive_subtrees:
+            if group_path.HasPrefix(inactive_path):
+                gated = True
+                break
+        if not gated:
+            continue
+
+        # All items of a gated group should be invisible
+        group = LodGroupAPI(stage, group_path)
+        for item_path in group.GetLodItems():
+            prim = stage.GetPrimAtPath(item_path)
+            if not prim:
+                continue
+            img = UsdGeom.Imageable(prim)
+            if img:
                 img.GetVisibilityAttr().Set('invisible')

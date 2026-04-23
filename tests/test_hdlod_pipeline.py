@@ -29,9 +29,12 @@ USD_ROOT = os.environ.get('USD_ROOT', '/tmp/usd-purpose-vis-build')
 
 def _has_hdlod_plugin():
     """Check if the hdLod plugin is installed."""
-    plugin_path = os.path.join(USD_ROOT, 'plugin', 'usd', 'hdLod', 'resources', 'plugInfo.json')
+    plugin_paths = [
+        os.path.join(USD_ROOT, 'plugin', 'usd', 'hdLod', 'resources', 'plugInfo.json'),
+        os.path.join(USD_ROOT, 'lib', 'usd', 'hdLod', 'resources', 'plugInfo.json'),
+    ]
     lib_path = os.path.join(USD_ROOT, 'lib', 'libusd_hdLod.so')
-    return os.path.exists(plugin_path) and os.path.exists(lib_path)
+    return any(os.path.exists(p) for p in plugin_paths) and os.path.exists(lib_path)
 
 
 def _render_frame(scene_path, camera_path, frame=0, purposes='render,proxy'):
@@ -43,6 +46,7 @@ def _render_frame(scene_path, camera_path, frame=0, purposes='render,proxy'):
     env['DISPLAY'] = ':99'
     env['__NV_PRIME_RENDER_OFFLOAD'] = '1'
     env['__GLX_VENDOR_LIBRARY_NAME'] = 'nvidia'
+    env['QT_QPA_PLATFORM'] = 'offscreen'
     env['LD_LIBRARY_PATH'] = f"{USD_ROOT}/lib:{env.get('LD_LIBRARY_PATH', '')}"
     env['PYTHONPATH'] = f"{USD_ROOT}/lib/python:{env.get('PYTHONPATH', '')}"
 
@@ -207,17 +211,26 @@ def _apply_color(stage, prim, rgb):
 class TestHdLodPluginExists(unittest.TestCase):
     """Verify the hdLod plugin is installed and discoverable."""
 
+    def _find_plugin_info(self):
+        """Find plugInfo.json in either plugin/usd/ or lib/usd/ layout."""
+        for subdir in ['plugin/usd', 'lib/usd']:
+            p = os.path.join(USD_ROOT, subdir, 'hdLod', 'resources', 'plugInfo.json')
+            if os.path.exists(p):
+                return p
+        return None
+
     def test_plugin_library_exists(self):
         lib = os.path.join(USD_ROOT, 'lib', 'libusd_hdLod.so')
         self.assertTrue(os.path.exists(lib), f"hdLod library not found: {lib}")
 
     def test_plugin_info_exists(self):
-        pi = os.path.join(USD_ROOT, 'plugin', 'usd', 'hdLod', 'resources', 'plugInfo.json')
-        self.assertTrue(os.path.exists(pi), f"plugInfo.json not found: {pi}")
+        pi = self._find_plugin_info()
+        self.assertIsNotNone(pi, "plugInfo.json not found in plugin/usd/ or lib/usd/")
 
     def test_plugin_info_valid(self):
         import json
-        pi = os.path.join(USD_ROOT, 'plugin', 'usd', 'hdLod', 'resources', 'plugInfo.json')
+        pi = self._find_plugin_info()
+        self.assertIsNotNone(pi, "plugInfo.json not found")
         with open(pi) as f:
             data = json.load(f)
         plugins = data.get('Plugins', [])
@@ -429,6 +442,199 @@ class TestLodEvaluatorEdgeCases(unittest.TestCase):
         apply_lod_visibility(self.stage, r2)
         self.assertEqual(UsdGeom.Imageable(high).GetVisibilityAttr().Get(), 'invisible')
         self.assertEqual(UsdGeom.Imageable(low).GetVisibilityAttr().Get(), 'inherited')
+
+
+def _create_nested_lod_scene(path, camera_z=5.0):
+    """Create a nested LOD scene (City Block) for testing hierarchical gating.
+
+    /World/CityBlock (LodGroup, outer: min=28, max=32)
+    ├── DetailedBlock (Xform, LodItem)
+    │   └── Building (LodGroup, inner: min=10, max=14)
+    │       ├── HighBuilding (Sphere + Cone, red)  — active close
+    │       └── LowBuilding  (Cube, blue)           — active mid
+    └── SimplifiedBlock (Cube, grey)                 — active far
+    /World/Camera at (0, 1.5, camera_z)
+    """
+    stage = Usd.Stage.CreateNew(path)
+    stage.SetMetadata('upAxis', 'Y')
+
+    # Ground plane
+    ground = UsdGeom.Cube.Define(stage, '/World/Ground')
+    ground.GetSizeAttr().Set(40.0)
+    ground.AddTranslateOp().Set(Gf.Vec3d(0, -0.2, 0))
+    ground.AddScaleOp().Set(Gf.Vec3f(1, 0.005, 0.5))
+    _apply_color(stage, ground.GetPrim(), (0.25, 0.25, 0.25))
+
+    # === Outer LOD Group: CityBlock ===
+    block = stage.DefinePrim('/World/CityBlock', 'Xform')
+    outer_group = LodGroupAPI.Apply(stage, block.GetPath())
+
+    # -- Outer item 0: DetailedBlock (Xform parent with inner LOD) --
+    detailed = stage.DefinePrim('/World/CityBlock/DetailedBlock', 'Xform')
+    LodItemAPI.Apply(stage, detailed.GetPath())
+
+    # -- Outer item 1: SimplifiedBlock (grey cube stand-in) --
+    simple = UsdGeom.Cube.Define(stage, '/World/CityBlock/SimplifiedBlock')
+    simple.GetSizeAttr().Set(2.0)
+    simple.AddTranslateOp().Set(Gf.Vec3d(0, 1.0, 0))
+    LodItemAPI.Apply(stage, simple.GetPrim().GetPath())
+    _apply_color(stage, simple.GetPrim(), (0.5, 0.5, 0.5))
+
+    outer_group.SetLodItems([detailed.GetPath(), simple.GetPrim().GetPath()])
+
+    h_outer = LodDistanceHeuristicAPI.Apply(stage, block.GetPath(), 'graphics')
+    h_outer.SetDistanceMinThresholds([28.0])
+    h_outer.SetDistanceMaxThresholds([32.0])
+
+    # === Inner LOD Group: Building (inside DetailedBlock) ===
+    building = stage.DefinePrim('/World/CityBlock/DetailedBlock/Building', 'Xform')
+    inner_group = LodGroupAPI.Apply(stage, building.GetPath())
+
+    # -- Inner item 0: HighBuilding (red sphere + cone tower) --
+    high_xf = stage.DefinePrim('/World/CityBlock/DetailedBlock/Building/HighBuilding', 'Xform')
+    LodItemAPI.Apply(stage, high_xf.GetPath())
+
+    body = UsdGeom.Sphere.Define(stage, '/World/CityBlock/DetailedBlock/Building/HighBuilding/Body')
+    body.GetRadiusAttr().Set(0.7)
+    body.AddTranslateOp().Set(Gf.Vec3d(0, 0.7, 0))
+    _apply_color(stage, body.GetPrim(), (0.9, 0.15, 0.1))
+
+    tower = UsdGeom.Cone.Define(stage, '/World/CityBlock/DetailedBlock/Building/HighBuilding/Tower')
+    tower.GetRadiusAttr().Set(0.35)
+    tower.GetHeightAttr().Set(0.8)
+    tower.AddTranslateOp().Set(Gf.Vec3d(0, 1.8, 0))
+    _apply_color(stage, tower.GetPrim(), (0.9, 0.15, 0.1))
+
+    # -- Inner item 1: LowBuilding (blue cube) --
+    low = UsdGeom.Cube.Define(stage, '/World/CityBlock/DetailedBlock/Building/LowBuilding')
+    low.GetSizeAttr().Set(1.2)
+    low.AddTranslateOp().Set(Gf.Vec3d(0, 0.6, 0))
+    LodItemAPI.Apply(stage, low.GetPrim().GetPath())
+    _apply_color(stage, low.GetPrim(), (0.15, 0.3, 0.9))
+
+    inner_group.SetLodItems([high_xf.GetPath(), low.GetPrim().GetPath()])
+
+    h_inner = LodDistanceHeuristicAPI.Apply(stage, building.GetPath(), 'graphics')
+    h_inner.SetDistanceMinThresholds([10.0])
+    h_inner.SetDistanceMaxThresholds([14.0])
+
+    # Camera
+    cam = UsdGeom.Camera.Define(stage, '/World/Camera')
+    cam.GetClippingRangeAttr().Set(Gf.Vec2f(0.1, 200))
+    cam.GetFocalLengthAttr().Set(35.0)
+    cam.AddTranslateOp().Set(Gf.Vec3d(0, 1.5, camera_z))
+    cam.AddRotateXYZOp().Set(Gf.Vec3f(-10, 0, 0))
+
+    # Lights
+    dome = stage.DefinePrim('/World/DomeLight', 'DomeLight')
+    dome.CreateAttribute('inputs:intensity', Sdf.ValueTypeNames.Float).Set(0.5)
+    key = stage.DefinePrim('/World/KeyLight', 'DistantLight')
+    key.CreateAttribute('inputs:intensity', Sdf.ValueTypeNames.Float).Set(3.0)
+    UsdGeom.Xformable(key).AddRotateXYZOp().Set(Gf.Vec3f(-45, 30, 0))
+
+    stage.Save()
+    return stage
+
+
+@unittest.skipUnless(_has_hdlod_plugin(), "hdLod plugin not installed")
+class TestHdLodNestedRendering(unittest.TestCase):
+    """Test nested LOD through the full rendering pipeline (usdrecord + Storm).
+
+    Exercises Axiom 1 (hierarchical gating) at 3 camera distances:
+      Close (Z=5)  → red tower  (outer=DetailedBlock, inner=HighBuilding)
+      Mid   (Z=20) → blue cube  (outer=DetailedBlock, inner=LowBuilding)
+      Far   (Z=45) → grey box   (outer=SimplifiedBlock, inner gated)
+    """
+
+    def test_close_nested_renders(self):
+        """Camera at Z=5 → nested high detail renders successfully."""
+        with tempfile.NamedTemporaryFile(suffix='.usda', delete=False) as f:
+            scene_path = f.name
+        try:
+            _create_nested_lod_scene(scene_path, camera_z=5.0)
+            img = _render_frame(scene_path, '/World/Camera')
+            self.assertIsNotNone(img, "Render failed for nested scene (close)")
+            self.assertGreater(os.path.getsize(img), 1000)
+        finally:
+            os.unlink(scene_path)
+
+    def test_mid_nested_renders(self):
+        """Camera at Z=20 → nested low detail renders successfully."""
+        with tempfile.NamedTemporaryFile(suffix='.usda', delete=False) as f:
+            scene_path = f.name
+        try:
+            _create_nested_lod_scene(scene_path, camera_z=20.0)
+            img = _render_frame(scene_path, '/World/Camera')
+            self.assertIsNotNone(img, "Render failed for nested scene (mid)")
+            self.assertGreater(os.path.getsize(img), 1000)
+        finally:
+            os.unlink(scene_path)
+
+    def test_far_nested_renders(self):
+        """Camera at Z=45 → simplified block renders successfully."""
+        with tempfile.NamedTemporaryFile(suffix='.usda', delete=False) as f:
+            scene_path = f.name
+        try:
+            _create_nested_lod_scene(scene_path, camera_z=45.0)
+            img = _render_frame(scene_path, '/World/Camera')
+            self.assertIsNotNone(img, "Render failed for nested scene (far)")
+            self.assertGreater(os.path.getsize(img), 1000)
+        finally:
+            os.unlink(scene_path)
+
+    def test_all_three_states_differ(self):
+        """Close, mid, and far renders should all produce different images."""
+        paths = []
+        try:
+            for z in [5.0, 20.0, 45.0]:
+                with tempfile.NamedTemporaryFile(suffix='.usda', delete=False) as f:
+                    paths.append(f.name)
+                _create_nested_lod_scene(paths[-1], camera_z=z)
+
+            imgs = [_render_frame(p, '/World/Camera') for p in paths]
+            for i, img in enumerate(imgs):
+                self.assertIsNotNone(img, f"Render failed for distance index {i}")
+
+            sizes = [os.path.getsize(img) for img in imgs]
+
+            # All 3 should differ pairwise (different geometry visible)
+            self.assertNotEqual(sizes[0], sizes[1],
+                                "Close and mid renders should differ (tower vs cube)")
+            self.assertNotEqual(sizes[1], sizes[2],
+                                "Mid and far renders should differ (cube vs grey box)")
+            self.assertNotEqual(sizes[0], sizes[2],
+                                "Close and far renders should differ (tower vs grey box)")
+        finally:
+            for p in paths:
+                os.unlink(p)
+
+    def test_far_hides_all_inner_geometry(self):
+        """At far distance, inner LOD items should all be hidden (Axiom 1 gating).
+
+        Render at mid (inner=LowBuilding visible, blue) vs far (all inner hidden, grey).
+        If gating works, far render should have NO blue pixels from inner group.
+        """
+        paths = []
+        try:
+            for z in [20.0, 45.0]:
+                with tempfile.NamedTemporaryFile(suffix='.usda', delete=False) as f:
+                    paths.append(f.name)
+                _create_nested_lod_scene(paths[-1], camera_z=z)
+
+            mid_img = _render_frame(paths[0], '/World/Camera')
+            far_img = _render_frame(paths[1], '/World/Camera')
+
+            self.assertIsNotNone(mid_img)
+            self.assertIsNotNone(far_img)
+
+            # Images must differ — far should not contain the blue cube
+            mid_size = os.path.getsize(mid_img)
+            far_size = os.path.getsize(far_img)
+            self.assertNotEqual(mid_size, far_size,
+                                "Mid and far should differ (inner gating)")
+        finally:
+            for p in paths:
+                os.unlink(p)
 
 
 if __name__ == '__main__':

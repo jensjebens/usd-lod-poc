@@ -266,6 +266,177 @@ class TestLodHierarchical(unittest.TestCase):
         )
 
 
+class TestLodNestedHierarchy(unittest.TestCase):
+    """Test 3-state nested LOD: outer group + inner group (City Block scene).
+
+    Scene structure:
+        /World/CityBlock (LodGroup, thresholds 28/32)
+        ├── DetailedBlock (Xform, LodItem)
+        │   └── Building (LodGroup, thresholds 10/14)
+        │       ├── HighBuilding (Sphere, LodItem)  — red tower
+        │       └── LowBuilding  (Cube, LodItem)    — blue cube
+        └── SimplifiedBlock (Cube, LodItem)          — grey box
+
+    3 LOD states:
+        Close  (Z=5)  → DetailedBlock active → HighBuilding active
+        Mid    (Z=20) → DetailedBlock active → LowBuilding active
+        Far    (Z=45) → SimplifiedBlock active → Building NOT evaluated
+    """
+
+    def _create_nested_scene(self):
+        from usd_lod import LodGroupAPI, LodItemAPI, LodDistanceHeuristicAPI
+
+        stage = Usd.Stage.CreateInMemory()
+        stage.SetMetadata('upAxis', 'Y')
+
+        # Outer group: CityBlock
+        block = stage.DefinePrim('/World/CityBlock', 'Xform')
+        detailed = stage.DefinePrim('/World/CityBlock/DetailedBlock', 'Xform')
+        simplified = stage.DefinePrim('/World/CityBlock/SimplifiedBlock', 'Xform')
+
+        LodItemAPI.Apply(stage, detailed.GetPath())
+        LodItemAPI.Apply(stage, simplified.GetPath())
+
+        outer = LodGroupAPI.Apply(stage, block.GetPath())
+        outer.SetLodItems([detailed.GetPath(), simplified.GetPath()])
+
+        h_outer = LodDistanceHeuristicAPI.Apply(stage, block.GetPath(), 'graphics')
+        h_outer.SetDistanceMinThresholds([28.0])
+        h_outer.SetDistanceMaxThresholds([32.0])
+
+        # Inner group: Building (inside DetailedBlock)
+        building = stage.DefinePrim('/World/CityBlock/DetailedBlock/Building', 'Xform')
+        high_b = stage.DefinePrim('/World/CityBlock/DetailedBlock/Building/HighBuilding', 'Xform')
+        low_b = stage.DefinePrim('/World/CityBlock/DetailedBlock/Building/LowBuilding', 'Xform')
+
+        LodItemAPI.Apply(stage, high_b.GetPath())
+        LodItemAPI.Apply(stage, low_b.GetPath())
+
+        inner = LodGroupAPI.Apply(stage, building.GetPath())
+        inner.SetLodItems([high_b.GetPath(), low_b.GetPath()])
+
+        h_inner = LodDistanceHeuristicAPI.Apply(stage, building.GetPath(), 'graphics')
+        h_inner.SetDistanceMinThresholds([10.0])
+        h_inner.SetDistanceMaxThresholds([14.0])
+
+        return stage
+
+    def test_close_selects_detailed_and_high_building(self):
+        """Camera at Z=5 → outer=DetailedBlock, inner=HighBuilding."""
+        from lod_evaluator import evaluate_lod
+
+        stage = self._create_nested_scene()
+        result = evaluate_lod(stage, camera_pos=Gf.Vec3d(0, 0, 5))
+
+        self.assertEqual(result[Sdf.Path('/World/CityBlock')], 0)  # DetailedBlock
+        self.assertIn(Sdf.Path('/World/CityBlock/DetailedBlock/Building'), result)
+        self.assertEqual(
+            result[Sdf.Path('/World/CityBlock/DetailedBlock/Building')], 0  # HighBuilding
+        )
+
+    def test_mid_selects_detailed_and_low_building(self):
+        """Camera at Z=20 → outer=DetailedBlock, inner=LowBuilding."""
+        from lod_evaluator import evaluate_lod
+
+        stage = self._create_nested_scene()
+        result = evaluate_lod(stage, camera_pos=Gf.Vec3d(0, 0, 20))
+
+        self.assertEqual(result[Sdf.Path('/World/CityBlock')], 0)  # DetailedBlock
+        self.assertIn(Sdf.Path('/World/CityBlock/DetailedBlock/Building'), result)
+        self.assertEqual(
+            result[Sdf.Path('/World/CityBlock/DetailedBlock/Building')], 1  # LowBuilding
+        )
+
+    def test_far_selects_simplified_and_gates_inner(self):
+        """Camera at Z=45 → outer=SimplifiedBlock, inner NOT evaluated."""
+        from lod_evaluator import evaluate_lod
+
+        stage = self._create_nested_scene()
+        result = evaluate_lod(stage, camera_pos=Gf.Vec3d(0, 0, 45))
+
+        self.assertEqual(result[Sdf.Path('/World/CityBlock')], 1)  # SimplifiedBlock
+        self.assertNotIn(
+            Sdf.Path('/World/CityBlock/DetailedBlock/Building'), result
+        )
+
+    def test_nested_visibility_close(self):
+        """At close range, HighBuilding visible, LowBuilding+SimplifiedBlock invisible."""
+        from lod_evaluator import evaluate_lod, apply_lod_visibility
+
+        stage = self._create_nested_scene()
+
+        # Add actual geometry so visibility attrs exist
+        UsdGeom.Sphere.Define(stage, '/World/CityBlock/DetailedBlock/Building/HighBuilding/Mesh')
+        UsdGeom.Cube.Define(stage, '/World/CityBlock/DetailedBlock/Building/LowBuilding/Mesh')
+        UsdGeom.Cube.Define(stage, '/World/CityBlock/SimplifiedBlock/Mesh')
+
+        result = evaluate_lod(stage, camera_pos=Gf.Vec3d(0, 0, 5))
+        apply_lod_visibility(stage, result)
+
+        high_b = stage.GetPrimAtPath('/World/CityBlock/DetailedBlock/Building/HighBuilding')
+        low_b = stage.GetPrimAtPath('/World/CityBlock/DetailedBlock/Building/LowBuilding')
+        simple = stage.GetPrimAtPath('/World/CityBlock/SimplifiedBlock')
+
+        self.assertEqual(
+            UsdGeom.Imageable(high_b).GetVisibilityAttr().Get(), 'inherited'
+        )
+        self.assertEqual(
+            UsdGeom.Imageable(low_b).GetVisibilityAttr().Get(), 'invisible'
+        )
+        self.assertEqual(
+            UsdGeom.Imageable(simple).GetVisibilityAttr().Get(), 'invisible'
+        )
+
+    def test_nested_visibility_far(self):
+        """At far range, SimplifiedBlock visible, everything under DetailedBlock invisible."""
+        from lod_evaluator import evaluate_lod, apply_lod_visibility
+
+        stage = self._create_nested_scene()
+
+        UsdGeom.Sphere.Define(stage, '/World/CityBlock/DetailedBlock/Building/HighBuilding/Mesh')
+        UsdGeom.Cube.Define(stage, '/World/CityBlock/DetailedBlock/Building/LowBuilding/Mesh')
+        UsdGeom.Cube.Define(stage, '/World/CityBlock/SimplifiedBlock/Mesh')
+
+        result = evaluate_lod(stage, camera_pos=Gf.Vec3d(0, 0, 45))
+        apply_lod_visibility(stage, result)
+
+        high_b = stage.GetPrimAtPath('/World/CityBlock/DetailedBlock/Building/HighBuilding')
+        low_b = stage.GetPrimAtPath('/World/CityBlock/DetailedBlock/Building/LowBuilding')
+        simple = stage.GetPrimAtPath('/World/CityBlock/SimplifiedBlock')
+
+        # SimplifiedBlock is the active outer item → visible
+        self.assertEqual(
+            UsdGeom.Imageable(simple).GetVisibilityAttr().Get(), 'inherited'
+        )
+        # DetailedBlock's children should be invisible
+        self.assertEqual(
+            UsdGeom.Imageable(high_b).GetVisibilityAttr().Get(), 'invisible'
+        )
+        self.assertEqual(
+            UsdGeom.Imageable(low_b).GetVisibilityAttr().Get(), 'invisible'
+        )
+
+    def test_nested_hysteresis_outer_boundary(self):
+        """Hysteresis on outer group: at Z=30 (between min=28, max=32), previous state holds."""
+        from lod_evaluator import evaluate_lod
+
+        stage = self._create_nested_scene()
+
+        # Was close (outer=0=DetailedBlock), move to Z=30 → should stay DetailedBlock
+        result = evaluate_lod(
+            stage, camera_pos=Gf.Vec3d(0, 0, 30),
+            prev_state={Sdf.Path('/World/CityBlock'): 0}
+        )
+        self.assertEqual(result[Sdf.Path('/World/CityBlock')], 0)
+
+        # Was far (outer=1=SimplifiedBlock), move to Z=30 → should stay SimplifiedBlock
+        result = evaluate_lod(
+            stage, camera_pos=Gf.Vec3d(0, 0, 30),
+            prev_state={Sdf.Path('/World/CityBlock'): 1}
+        )
+        self.assertEqual(result[Sdf.Path('/World/CityBlock')], 1)
+
+
 class TestLodVisibilityApplication(unittest.TestCase):
     """Test that LOD evaluation results are applied as visibility."""
 
