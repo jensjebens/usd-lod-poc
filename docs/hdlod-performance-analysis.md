@@ -242,6 +242,18 @@ The main cost driver at scale is `ComputeLocalToWorldTransform` (bottleneck #2) 
 
 ---
 
+## Newton's Review (April 23, 2026)
+
+Newton reviewed all 4 bottlenecks against HdExec patterns at ALAB scale. Key takeaways:
+
+1. **Hydra xform reads confirmed** — `GetTypedValue(0)` is a shutter offset (NOT a time code). Read from `_GetInputSceneIndex()`, never `this->GetPrim()` (avoids recursing into own overlay). Fixes animated LOD groups for free.
+2. **HdExec doesn't filter dirties** — uses `UniversalSet()` because few bodies. LOD should be smarter: camera-change guard + path-prefix for moving groups.
+3. **Incremental cache** — HdExec `_hasComputationCache` pattern: evict on add, lazy rebuild. No stage traversal.
+4. **Singleton overlay confirmed** — `HdOverlayContainerDataSource` checks sources in order, first wins. Safe to delete `_InvisibleDataSource` entirely.
+
+Fix plan: `plans/hdlod-perf-fixes.md`
+Issues: #40, #41, #42, #43
+
 ## Not Covered (Future Considerations)
 
 - **Screen-space LOD heuristic** (`LodScreenSizeHeuristicAPI`) — needs bounding box + projection matrix, more expensive than distance
