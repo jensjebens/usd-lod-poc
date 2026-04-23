@@ -1,0 +1,309 @@
+[
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large02_0003",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large02_0003/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large02_0003/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large03_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large03_0002/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large03_0002/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_medium02_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_medium02_0002/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_medium02_0002/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_small02_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_small02_0002/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_small02_0002/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/wall_dressing01/decor_party_lights01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/wall_dressing01/decor_party_lights01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/wall_dressing01/decor_party_lights01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment03_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment03_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment03_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/proc_dev_circuit_board_large03_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/proc_dev_circuit_board_large03_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/proc_dev_circuit_board_large03_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_2",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_2/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_2/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0002/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0002/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0002/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0002/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0003",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0003/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0003/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0002",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0002/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0002/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_medium02_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_medium02_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_medium02_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small02_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small02_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small02_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small03_0001",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small03_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small03_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_electronics01_0001/bench01/draw01/proc_dev_circuit_board_large01_0003",
+    "proxy": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/draw01/proc_dev_circuit_board_large01_0003/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_electronics01_0001/bench01/draw01/proc_dev_circuit_board_large01_0003/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large01_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large01_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large02_0001",
+    "proxy": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large02_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large02_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_medium01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_medium01_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_medium01_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_structure01_0001/structure_base01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_structure01_0001/structure_base01_0001/instancer",
+      "/root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY",
+    "proxy": [
+      "/root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY/Instanced_Proxy_Geo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY/mesh"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/shelf01/vegetation_bonsai01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/shelf01/vegetation_bonsai01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/shelf01/vegetation_bonsai01_0001/SPRUCE"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/wall_dressing01/toy_curly_surgery_0001",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/wall_dressing01/toy_curly_surgery_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/wall_dressing01/toy_curly_surgery_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_medium04_0001",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_medium04_0001/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_medium04_0001/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_small02_0003",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_small02_0003/proxyGeo"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_small02_0003/instancer"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment01_0002",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment01_0002/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment01_0002/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment03_0002",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment03_0002/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment03_0002/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_audio_generator01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_audio_generator01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_audio_generator01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_oscilloscope01_0001",
+    "proxy": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_oscilloscope01_0001/GEO_PROXY"
+    ],
+    "render": [
+      "/root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_oscilloscope01_0001/GEO"
+    ]
+  },
+  {
+    "asset": "/root/dmp_skydome_alab01",
+    "proxy": [
+      "/root/dmp_skydome_alab01/GEO_PROXY"
+    ],
+    "render": [
+      "/root/dmp_skydome_alab01/GEO"
+    ]
+  }
+]

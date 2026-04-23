@@ -1,0 +1,882 @@
+#usda 1.0
+(
+    "LOD overlay for ALAB - distance threshold 200/250"
+)
+
+over "root"
+{
+    over "alab_set01"
+    {
+        over "lab_electronics01_0001"
+        {
+            over "shelf_unit01"
+            {
+                over "shelf02"
+                {
+                    over "proc_dev_circuit_board_large02_0003" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large02_0003/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large02_0003/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_large03_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large03_0002/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_large03_0002/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_medium02_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_medium02_0002/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_medium02_0002/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_small02_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_small02_0002/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/shelf_unit01/shelf02/proc_dev_circuit_board_small02_0002/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+            }
+
+            over "wall_dressing01"
+            {
+                over "decor_party_lights01_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_electronics01_0001/wall_dressing01/decor_party_lights01_0001/GEO>,
+                        </root/alab_set01/lab_electronics01_0001/wall_dressing01/decor_party_lights01_0001/GEO_PROXY>,
+                    ]
+
+                    over "GEO" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "GEO_PROXY" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+
+            over "bench01"
+            {
+                over "shelf01"
+                {
+                    over "electronics_ham_equipment01_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment01_0001/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment01_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "electronics_ham_equipment03_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment03_0001/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/electronics_ham_equipment03_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_large03_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/proc_dev_circuit_board_large03_0001/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/proc_dev_circuit_board_large03_0001/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar01_2" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_2/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_2/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar03_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0002/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0002/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar01_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0001/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar01_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0002/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0002/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar01_0003" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0003/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar01_0003/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar02_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0001/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar02_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0002/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar02_0002/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "decor_jar03_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0001/GEO>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/shelf01/decor_jar03_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+
+                over "benchtop01"
+                {
+                    over "proc_dev_circuit_board_medium02_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_medium02_0001/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_medium02_0001/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_small02_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small02_0001/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small02_0001/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "proc_dev_circuit_board_small03_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small03_0001/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/benchtop01/proc_dev_circuit_board_small03_0001/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+
+                over "draw01"
+                {
+                    over "proc_dev_circuit_board_large01_0003" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_electronics01_0001/bench01/draw01/proc_dev_circuit_board_large01_0003/instancer>,
+                            </root/alab_set01/lab_electronics01_0001/bench01/draw01/proc_dev_circuit_board_large01_0003/proxyGeo>,
+                        ]
+
+                        over "instancer" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "proxyGeo" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+            }
+        }
+
+        over "lab_hydrophonics01_0001"
+        {
+            over "sink01"
+            {
+                over "proc_dev_circuit_board_large01_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large01_0001/instancer>,
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large01_0001/proxyGeo>,
+                    ]
+
+                    over "instancer" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "proxyGeo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+
+                over "proc_dev_circuit_board_large02_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large02_0001/instancer>,
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_large02_0001/proxyGeo>,
+                    ]
+
+                    over "instancer" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "proxyGeo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+
+                over "proc_dev_circuit_board_medium01_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_medium01_0001/instancer>,
+                        </root/alab_set01/lab_hydrophonics01_0001/sink01/proc_dev_circuit_board_medium01_0001/proxyGeo>,
+                    ]
+
+                    over "instancer" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "proxyGeo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+        }
+
+        over "lab_structure01_0001"
+        {
+            over "structure_base01_0001" (
+                prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+            )
+            {
+                custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                custom rel lod:lodItems = [
+                    </root/alab_set01/lab_structure01_0001/structure_base01_0001/instancer>,
+                    </root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO>,
+                    </root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY>,
+                ]
+
+                over "instancer" (
+                    prepend apiSchemas = ["LodItemAPI"]
+                )
+                {
+                }
+
+                over "GEO" (
+                    prepend apiSchemas = ["LodItemAPI"]
+                )
+                {
+                }
+
+                over "GEO_PROXY" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY/mesh>,
+                        </root/alab_set01/lab_structure01_0001/structure_base01_0001/GEO_PROXY/Instanced_Proxy_Geo>,
+                    ]
+
+                    over "mesh" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "Instanced_Proxy_Geo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+        }
+
+        over "lab_workbench01_0001"
+        {
+            over "shelf01"
+            {
+                over "vegetation_bonsai01_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_workbench01_0001/shelf01/vegetation_bonsai01_0001/SPRUCE>,
+                        </root/alab_set01/lab_workbench01_0001/shelf01/vegetation_bonsai01_0001/GEO_PROXY>,
+                    ]
+
+                    over "SPRUCE" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "GEO_PROXY" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+
+            over "wall_dressing01"
+            {
+                over "toy_curly_surgery_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_workbench01_0001/wall_dressing01/toy_curly_surgery_0001/GEO>,
+                        </root/alab_set01/lab_workbench01_0001/wall_dressing01/toy_curly_surgery_0001/GEO_PROXY>,
+                    ]
+
+                    over "GEO" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "GEO_PROXY" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+
+            over "shelf02"
+            {
+                over "proc_dev_circuit_board_medium04_0001" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_medium04_0001/instancer>,
+                        </root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_medium04_0001/proxyGeo>,
+                    ]
+
+                    over "instancer" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "proxyGeo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+
+                over "proc_dev_circuit_board_small02_0003" (
+                    prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                )
+                {
+                    custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                    custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                    custom rel lod:lodItems = [
+                        </root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_small02_0003/instancer>,
+                        </root/alab_set01/lab_workbench01_0001/shelf02/proc_dev_circuit_board_small02_0003/proxyGeo>,
+                    ]
+
+                    over "instancer" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+
+                    over "proxyGeo" (
+                        prepend apiSchemas = ["LodItemAPI"]
+                    )
+                    {
+                    }
+                }
+            }
+
+            over "workbench01"
+            {
+                over "workbench_shelf02"
+                {
+                    over "electronics_ham_equipment01_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment01_0002/GEO>,
+                            </root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment01_0002/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "electronics_ham_equipment03_0002" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment03_0002/GEO>,
+                            </root/alab_set01/lab_workbench01_0001/workbench01/workbench_shelf02/electronics_ham_equipment03_0002/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+
+                over "benchtop03"
+                {
+                    over "electronics_audio_generator01_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_audio_generator01_0001/GEO>,
+                            </root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_audio_generator01_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+
+                    over "electronics_oscilloscope01_0001" (
+                        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+                    )
+                    {
+                        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+                        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+                        custom rel lod:lodItems = [
+                            </root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_oscilloscope01_0001/GEO>,
+                            </root/alab_set01/lab_workbench01_0001/workbench01/benchtop03/electronics_oscilloscope01_0001/GEO_PROXY>,
+                        ]
+
+                        over "GEO" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+
+                        over "GEO_PROXY" (
+                            prepend apiSchemas = ["LodItemAPI"]
+                        )
+                        {
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    over "dmp_skydome_alab01" (
+        prepend apiSchemas = ["LodGroupAPI", "LodDistanceHeuristicAPI:graphics"]
+    )
+    {
+        custom float[] lod:Heuristic:graphics:distance:maxThresholds = [250]
+        custom float[] lod:Heuristic:graphics:distance:minThresholds = [200]
+        custom rel lod:lodItems = [
+            </root/dmp_skydome_alab01/GEO>,
+            </root/dmp_skydome_alab01/GEO_PROXY>,
+        ]
+
+        over "GEO" (
+            prepend apiSchemas = ["LodItemAPI"]
+        )
+        {
+        }
+
+        over "GEO_PROXY" (
+            prepend apiSchemas = ["LodItemAPI"]
+        )
+        {
+        }
+    }
+}
+

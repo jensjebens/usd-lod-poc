@@ -1,0 +1,9 @@
+#usda 1.0
+(
+    "ALAB + LOD overlay"
+    subLayers = [
+        @/home/horde/.openclaw/workspace-lod/demo/alab_lod/alab_lod_overlay.usda@,
+        @/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usda@
+    ]
+)
+
