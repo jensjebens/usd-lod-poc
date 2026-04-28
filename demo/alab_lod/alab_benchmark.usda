@@ -1,0 +1,48 @@
+#usda 1.0
+(
+    "ALAB + LOD + benchmark cameras"
+    subLayers = [
+        @/home/horde/.openclaw/workspace-lod/demo/alab_lod/alab_lod_overlay.usda@,
+        @/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usda@
+    ]
+    defaultPrim = "root"
+)
+
+def Camera "bench_cam_close" (
+    doc = "Close-up camera for LOD benchmark"
+)
+{
+    float focalLength = 35
+    float horizontalAperture = 36
+    float verticalAperture = 24
+    float2 clippingRange = (1, 100000)
+    double3 xformOp:translate = (80, 120, 100)
+    float3 xformOp:rotateXYZ = (-15, 25, 0)
+    token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+
+def Camera "bench_cam_mid" (
+    doc = "Mid-distance camera for LOD benchmark"
+)
+{
+    float focalLength = 35
+    float horizontalAperture = 36
+    float verticalAperture = 24
+    float2 clippingRange = (1, 100000)
+    double3 xformOp:translate = (250, 200, 350)
+    float3 xformOp:rotateXYZ = (-20, 30, 0)
+    token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+
+def Camera "bench_cam_wide" (
+    doc = "Wide establishing camera for LOD benchmark"
+)
+{
+    float focalLength = 24
+    float horizontalAperture = 36
+    float verticalAperture = 24
+    float2 clippingRange = (1, 100000)
+    double3 xformOp:translate = (500, 350, 700)
+    float3 xformOp:rotateXYZ = (-25, 30, 0)
+    token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
