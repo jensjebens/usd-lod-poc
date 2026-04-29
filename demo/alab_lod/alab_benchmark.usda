@@ -6,43 +6,45 @@
         @/home/horde/.openclaw/workspace-alab/alab/ALab-2.3.0/ALab/entry.usda@
     ]
     defaultPrim = "root"
+    startTimeCode = 1
+    endTimeCode = 1
 )
 
-def Camera "bench_cam_close" (
-    doc = "Close-up camera for LOD benchmark"
-)
-{
-    float focalLength = 35
-    float horizontalAperture = 36
-    float verticalAperture = 24
-    float2 clippingRange = (1, 100000)
-    double3 xformOp:translate = (80, 120, 100)
-    float3 xformOp:rotateXYZ = (-15, 25, 0)
-    token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
-}
-
-def Camera "bench_cam_mid" (
-    doc = "Mid-distance camera for LOD benchmark"
+def Camera "bench_close" (
+    doc = "Close-up - inside LOD threshold, should show render geo"
 )
 {
     float focalLength = 35
     float horizontalAperture = 36
     float verticalAperture = 24
     float2 clippingRange = (1, 100000)
-    double3 xformOp:translate = (250, 200, 350)
-    float3 xformOp:rotateXYZ = (-20, 30, 0)
+    double3 xformOp:translate = (230, 90, 10)
+    float3 xformOp:rotateXYZ = (0, 45, 0)
     token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
 }
 
-def Camera "bench_cam_wide" (
-    doc = "Wide establishing camera for LOD benchmark"
+def Camera "bench_mid" (
+    doc = "Mid-distance - near threshold boundary"  
+)
+{
+    float focalLength = 35
+    float horizontalAperture = 36
+    float verticalAperture = 24
+    float2 clippingRange = (1, 100000)
+    double3 xformOp:translate = (150, 120, 200)
+    float3 xformOp:rotateXYZ = (-10, 20, 0)
+    token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
+}
+
+def Camera "bench_wide" (
+    doc = "Wide establishing - beyond threshold, should show proxy geo"
 )
 {
     float focalLength = 24
     float horizontalAperture = 36
     float verticalAperture = 24
     float2 clippingRange = (1, 100000)
-    double3 xformOp:translate = (500, 350, 700)
-    float3 xformOp:rotateXYZ = (-25, 30, 0)
+    double3 xformOp:translate = (400, 250, 500)
+    float3 xformOp:rotateXYZ = (-20, 25, 0)
     token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
 }
